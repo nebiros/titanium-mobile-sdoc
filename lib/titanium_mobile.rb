@@ -6,17 +6,18 @@ module TitaniumMobile
       data.each do |key, values|
         block = {
           :id => key,
-          :description => values["description"].to_s.strip.gsub( /[\n|\t|\r]/, "" ).gsub( /[\s]{2,}/, " " ).strip_tags.capitalize,
+          :description => values["description"].to_s.strip.gsub( /[\n]/, "\n * " ).strip_tags.capitalize,
           :deprecated => values["deprecated"],
           :compat => values["platforms"].to_a.map{|c| c.capitalize}.join( "|" ),
           :code => [],
-          :since => values["since"]
+          :since => values["since"],
+          :type => values["returns"].to_s.split( "," ).map{|c| c.capitalize}.join( "|" ),
         }
 
         if !values["examples"].empty?
           values["examples"].each do |e|
             block[:code].push( {
-              :code => e["code"].strip.gsub( /[\n|\t|\r]/, "" ).gsub( /[\s]{2,}/, " " ).strip_tags,
+              :code => e["code"].to_s.strip.gsub( /[\n]/, "\n * " ),
               :description => e["description"].strip.gsub( /[\n|\t|\r]/, "" ).gsub( /[\s]{2,}/, " " ).strip_tags
             } )
           end
@@ -24,11 +25,11 @@ module TitaniumMobile
 
         api.push( block )
 
-        if values["methods"].empty?
+        if !values["methods"].empty?
           values["methods"].each do |m|
             block = {
               :id => "#{key}.#{m["name"]}",
-              :description => m["value"].to_s.strip.gsub( /[\n|\t|\r]/, "" ).gsub( /[\s]{2,}/, " " ).strip_tags.capitalize,
+              :description => m["value"].to_s.strip.gsub( /[\n]/, "\n * " ).strip_tags.capitalize,
               :deprecated => m["deprecated"],
               :type => m["returntype"].to_s.split( "," ).map{|c| c.capitalize}.join( "|" ),
               :parameters => [],
@@ -37,7 +38,7 @@ module TitaniumMobile
 
             if m["parameters"]
               m["parameters"].each do |p|
-                block[:parameters].push( {:name => p["name"], :description => p["description"], :type => "{#{p["type"].capitalize}}"} )
+                block[:parameters].push( {:name => p["name"], :description => p["description"].strip.gsub( /[\n|\t|\r]/, "" ).gsub( /[\s]{2,}/, " " ).strip_tags, :type => "{#{p["type"].capitalize}}"} )
               end
             end
 
@@ -49,7 +50,7 @@ module TitaniumMobile
           values["properties"].each do |p|
             block = {
               :id => "#{key}.#{p["name"]}",
-              :description => p["value"].to_s.strip.gsub( /[\n|\t|\r]/, "" ).gsub( /[\s]{2,}/, " " ).strip_tags.capitalize,
+              :description => p["value"].to_s.strip.gsub( /[\n]/, "\n * " ).strip_tags.capitalize,
               :deprecated => p["deprecated"],
               :type => p["type"].to_s.split( "," ).map{|c| c.capitalize}.join( "|" ),
               :property => true,
@@ -69,9 +70,10 @@ module TitaniumMobile
       block = <<-BLOCK
 /**
  * #{data[:description]} #{( data[:compat] ) ? "Platforms: " + data[:compat] : ""}
+ *
 BLOCK
 
-      if data[:code]
+      if !data[:code].to_a.empty?
         block += <<-BLOCK
  * @code
 BLOCK
@@ -88,7 +90,7 @@ BLOCK
  * @id #{data[:id]}
 BLOCK
 
-      if data[:parameters]
+      if !data[:parameters].to_a.empty?
         data[:parameters].each do |p|
           block += <<-BLOCK
  * @param #{p[:type]} #{p[:name]} #{p[:description]}
