@@ -17,6 +17,13 @@ Install
 
 Copy _dump/titanium-mobile.sdoc_ file to your project.
 
+![Demo](http://imagebin.ca/img/v_bIF23g.jpg)
+
+Known Bugs
+==========
+
+* I don't know why the comments doesn't work, still, methods, params, etc, works fine.
+
 License
 =======
 
