@@ -1,10 +1,10 @@
-require 'rubygems'
-require 'rake'
+require "rubygems"
+require "rake"
 
 desc "Build Titanium Mobile SDOC file"
 task :build_sdoc do
   require "json"
-  require "lib/titanium_mobile.rb"
+  require "./lib/titanium_mobile.rb"
 
   if !File.directory?( "dist" )
     raise "nah nah, you need a directory named 'dist' men!"
