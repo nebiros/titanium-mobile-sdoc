@@ -17,7 +17,7 @@ Install
 
 Copy _dump/titanium-mobile.sdoc_ file to your project.
 
-![Demo](http://www.jfalvarez.com/files/ti_autocomplete_test.jpg)
+![Demo](http://juan.im/files/ti_autocomplete_test.jpg)
 
 Known Bugs
 ==========
